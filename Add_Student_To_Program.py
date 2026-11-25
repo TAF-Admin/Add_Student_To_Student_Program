@@ -5,10 +5,13 @@ import tkinter as tk
 from tkinter import ttk
 from tkcalendar import Calendar
 from tqdm import tqdm
+import os
+from dotenv import load_dotenv
 
 # Load all necessary data from the excel an json file
-config = json.load(open(r'', 'r'))
-excel_file = r''
+load_dotenv("Add_Student_To_Program.env")
+config = json.load(open(os.environ.get("DATABASE_SOURCE"), 'r'))
+excel_file = os.environ.get('EXCEL_FILE_SOURCE')
 
 # Function to run the script
 def Add_Student_To_Program():
@@ -16,7 +19,9 @@ def Add_Student_To_Program():
     connection = pyodbc.connect(connection_string)
     cursor = connection.cursor()
 
-    df = pd.read_excel(excel_file, usecols=('ID number', 'First Name', 'Last Name'))
+    columns = ['ID number', 'First Name', 'Last Name']
+
+    df = pd.read_excel(excel_file, usecols=columns)[columns]
     pbar = tqdm(total=len(df), desc='Progress')
 
     selected_date = excel_file.split("/")[1][0:10].split('-')
